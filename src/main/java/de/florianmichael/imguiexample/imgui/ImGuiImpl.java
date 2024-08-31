@@ -61,6 +61,7 @@ public class ImGuiImpl {
     }
 
     public static void draw(final RenderInterface runnable) {
+        imGuiImplGl3.newFrame();
         imGuiImplGlfw.newFrame(); // Handle keyboard and mouse interactions
         ImGui.newFrame();
         runnable.render(ImGui.getIO());
