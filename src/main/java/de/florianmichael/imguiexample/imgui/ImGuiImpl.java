@@ -61,20 +61,26 @@ public class ImGuiImpl {
     }
 
     public static void draw(final RenderInterface runnable) {
+        // start frame
         imGuiImplGl3.newFrame();
         imGuiImplGlfw.newFrame(); // Handle keyboard and mouse interactions
         ImGui.newFrame();
+
+        // do rendering logic
         runnable.render(ImGui.getIO());
+
+        // end frame
         ImGui.render();
-
         imGuiImplGl3.renderDrawData(ImGui.getDrawData());
-        if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
-            final long pointer = GLFW.glfwGetCurrentContext();
-            ImGui.updatePlatformWindows();
-            ImGui.renderPlatformWindowsDefault();
 
-            GLFW.glfwMakeContextCurrent(pointer);
-        }
+        // Add this code if you have enabled Viewports in the create method
+//        if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
+//            final long pointer = GLFW.glfwGetCurrentContext();
+//            ImGui.updatePlatformWindows();
+//            ImGui.renderPlatformWindowsDefault();
+//
+//            GLFW.glfwMakeContextCurrent(pointer);
+//        }
     }
 
 // https://gist.github.com/FlorianMichael/b9d5ea2a4cb89c99e6da7dad68524c07
