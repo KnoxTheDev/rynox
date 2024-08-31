@@ -9,7 +9,6 @@ import imgui.extension.implot.ImPlot;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
-import org.lwjgl.glfw.GLFW;
 
 public class ImGuiImpl {
     private final static ImGuiImplGlfw imGuiImplGlfw = new ImGuiImplGlfw();
@@ -20,7 +19,7 @@ public class ImGuiImpl {
         ImPlot.createContext();
 
         final ImGuiIO data = ImGui.getIO();
-        data.setIniFilename("modid.ini");
+        data.setIniFilename("modid.ini"); // TODO; Change this to your modid
         data.setFontGlobalScale(1F);
 
         // If you want to have custom fonts, you can use the following code here
@@ -53,6 +52,7 @@ public class ImGuiImpl {
         // How you can apply the font then, you can see in ExampleMixin
 
         data.setConfigFlags(ImGuiConfigFlags.DockingEnable);
+
         // In case you want to enable Viewports on Windows, you have to do this instead of the above line:
         // data.setConfigFlags(ImGuiConfigFlags.DockingEnable | ImGuiConfigFlags.ViewportsEnable);
 
@@ -73,7 +73,7 @@ public class ImGuiImpl {
         ImGui.render();
         imGuiImplGl3.renderDrawData(ImGui.getDrawData());
 
-        // Add this code if you have enabled Viewports in the create method
+// Add this code if you have enabled Viewports in the create method
 //        if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
 //            final long pointer = GLFW.glfwGetCurrentContext();
 //            ImGui.updatePlatformWindows();
@@ -83,7 +83,13 @@ public class ImGuiImpl {
 //        }
     }
 
-// https://gist.github.com/FlorianMichael/b9d5ea2a4cb89c99e6da7dad68524c07
+    public static void dispose() {
+        imGuiImplGl3.shutdown();
+
+        ImGui.destroyContext();
+        ImPlot.destroyContext();
+    }
+
 // Can be used to load buffered images in ImGui
 //    public static int fromBufferedImage(BufferedImage image) {
 //        final int[] pixels = new int[image.getWidth() * image.getHeight()];
