@@ -101,9 +101,10 @@ public class ImGuiImpl {
 
     public static void dispose() {
         imGuiImplGl3.shutdown();
+        imGuiImplGlfw.shutdown();
 
-        ImGui.destroyContext();
         ImPlot.destroyContext();
+        ImGui.destroyContext();
     }
 
 // Can be used to load buffered images in ImGui
