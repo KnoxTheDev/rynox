@@ -13,10 +13,11 @@ public class ExampleMod implements ModInitializer {
     // It is considered best practice to use your mod id as the logger's name.
     // That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger("modid");
+
     public static final KeyBinding EXAMPLE_KEYBINDING = new KeyBinding(
             "key.imguiexample.example_keybinding",
-            GLFW.GLFW_KEY_RIGHT_SHIFT, // Key code
-            "key.categories.imguiexample" // Category for the keybinding
+            GLFW.GLFW_KEY_RIGHT_SHIFT,
+            "key.categories.imguiexample"
     );
 
     @Override
@@ -27,9 +28,11 @@ public class ExampleMod implements ModInitializer {
 
         LOGGER.info("Hello Fabric world!");
 
+        // Ingame example with ImGui, also see ExampleMixin
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (EXAMPLE_KEYBINDING.wasPressed())
-                client.setScreen(new ExampleScreen()); // An example screen that renders using ImGui
+            if (EXAMPLE_KEYBINDING.wasPressed()) {
+                client.setScreen(new ExampleScreen());
+            }
         });
     }
 }
