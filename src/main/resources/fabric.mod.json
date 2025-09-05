@@ -1,29 +1,26 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "rynox",
   "version": "${version}",
 
-  "name": "Example ImGui Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Rynox",
+  "description": "A crystal keybind optimizer.",
   "authors": [
-    "Me!"
+    "Knoxy"
   ],
-  "contact": {
-    "homepage": "https://github.com/FlorianMichael/",
-    "sources": "https://github.com/FlorianMichael/fabric-imgui-example-mod"
-  },
+  "contact": {},
 
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/rynox/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "de.florianmichael.imguiexample.ExampleMod"
+      "dev.knoxy.rynox.Rynox"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "rynox.mixins.json"
   ],
 
   "depends": {
@@ -31,8 +28,5 @@
     "minecraft": "~1.21",
     "java": ">=21",
     "fabric-api": "*"
-  },
-  "suggests": {
-    "another-mod": "*"
   }
 }

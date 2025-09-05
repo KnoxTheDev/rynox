@@ -1,6 +1,6 @@
-package de.florianmichael.imguiexample.mixin.imgui;
+package dev.knoxy.rynox.mixin.imgui;
 
-import de.florianmichael.imguiexample.imgui.ImGuiImpl;
+import dev.knoxy.rynox.gui.ImGuiImpl;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.util.Window;

@@ -1,7 +1,8 @@
-package de.florianmichael.imguiexample.mixin.imgui;
+package dev.knoxy.rynox.mixin.imgui;
 
-import de.florianmichael.imguiexample.imgui.ImGuiImpl;
-import de.florianmichael.imguiexample.imgui.RenderInterface;
+import dev.knoxy.rynox.Rynox;
+import dev.knoxy.rynox.gui.ImGuiImpl;
+import dev.knoxy.rynox.gui.RenderInterface;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderTickCounter;
@@ -21,6 +22,10 @@ public class GameRendererMixin {
 
     @Inject(method = "render", at = @At("RETURN"))
     private void render(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci) {
+        if (Rynox.CLICK_GUI.isVisible()) {
+            ImGuiImpl.draw(Rynox.CLICK_GUI);
+        }
+
         if (client.currentScreen instanceof final RenderInterface renderInterface) {
             ImGuiImpl.draw(renderInterface);
         }
