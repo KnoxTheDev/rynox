@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 public class Rynox implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("rynox");
-    public static final ClickGui CLICK_GUI = new ClickGui();
+    public static ClickGui CLICK_GUI;
 
     public static final KeyBinding TOGGLE_GUI_KEYBINDING = new KeyBinding(
             "key.rynox.toggle_gui",
@@ -24,6 +24,9 @@ public class Rynox implements ModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (TOGGLE_GUI_KEYBINDING.wasPressed()) {
+                if (CLICK_GUI == null) {
+                    CLICK_GUI = new ClickGui();
+                }
                 CLICK_GUI.toggle();
             }
         });
