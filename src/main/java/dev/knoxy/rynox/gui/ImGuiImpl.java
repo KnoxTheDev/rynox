@@ -1,8 +1,4 @@
-/*
- * This file is part of fabric-imgui-example-mod - https://github.com/FlorianMichael/fabric-imgui-example-mod
- * by FlorianMichael/EnZaXD and contributors
- */
-package de.florianmichael.imguiexample.imgui;
+package dev.knoxy.rynox.gui;
 
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -27,7 +23,7 @@ public class ImGuiImpl {
         ImPlot.createContext();
 
         final ImGuiIO data = ImGui.getIO();
-        data.setIniFilename("modid.ini"); // TODO; Change this to your modid
+        data.setIniFilename("rynox.ini");
         data.setFontGlobalScale(1F);
 
         // If you want to have custom fonts, you can use the following code here

@@ -1,14 +1,13 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "de.florianmichael.imguiexample.mixin",
+  "package": "dev.knoxy.rynox.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
   ],
   "client": [
     "imgui.GameRendererMixin",
-    "imgui.MinecraftClientMixin",
-    "TitleScreenMixin"
+    "imgui.MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1
