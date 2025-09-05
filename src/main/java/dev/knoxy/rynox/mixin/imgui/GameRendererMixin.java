@@ -22,7 +22,7 @@ public class GameRendererMixin {
 
     @Inject(method = "render", at = @At("RETURN"))
     private void render(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci) {
-        if (Rynox.CLICK_GUI.isVisible()) {
+        if (Rynox.CLICK_GUI != null && Rynox.CLICK_GUI.isVisible()) {
             ImGuiImpl.draw(Rynox.CLICK_GUI);
         }
 
