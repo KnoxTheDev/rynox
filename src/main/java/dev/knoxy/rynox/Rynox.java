@@ -21,7 +21,7 @@ public class Rynox implements ClientModInitializer {
     ));
 
     @Override
-    public void onInitialize() {
+    public void onInitializeClient() {
         LOGGER.info("Initializing Rynox...");
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
