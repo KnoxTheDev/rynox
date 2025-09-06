@@ -1,6 +1,9 @@
 package dev.knoxy.rynox.client.gui.clickgui.components;
 
 import dev.knoxy.rynox.client.gui.clickgui.api.Component;
+import dev.knoxy.rynox.client.gui.util.AnimationUtil;
+import dev.knoxy.rynox.client.gui.util.RenderUtil;
+import dev.knoxy.rynox.client.gui.FontManager;
 import dev.knoxy.rynox.client.gui.clickgui.theme.Colors;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -19,6 +22,8 @@ public class RangeSlider extends Component {
     private final double max;
     private boolean draggingMin;
     private boolean draggingMax;
+    private double animatedValueMin;
+    private double animatedValueMax;
 
     public RangeSlider(String name, Supplier<Double> getterMin, Consumer<Double> setterMin, Supplier<Double> getterMax, Consumer<Double> setterMax, double min, double max, int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -31,6 +36,8 @@ public class RangeSlider extends Component {
         this.max = max;
         this.draggingMin = false;
         this.draggingMax = false;
+        this.animatedValueMin = getterMin.get();
+        this.animatedValueMax = getterMax.get();
     }
 
     @Override
@@ -40,13 +47,13 @@ public class RangeSlider extends Component {
         double diff = max - min;
 
         if (draggingMin) {
-            double newValue = min + (Math.max(0, Math.min(width, mouseX - x)) / width) * diff;
+            double newValue = min + (Math.max(0, Math.min(width, mouseX - x)) / (double)width) * diff;
             if (newValue < valueMax) {
                 setterMin.accept(newValue);
             }
         }
         if (draggingMax) {
-            double newValue = min + (Math.max(0, Math.min(width, mouseX - x)) / width) * diff;
+            double newValue = min + (Math.max(0, Math.min(width, mouseX - x)) / (double)width) * diff;
             if (newValue > valueMin) {
                 setterMax.accept(newValue);
             }
@@ -55,12 +62,21 @@ public class RangeSlider extends Component {
         valueMin = getterMin.get(); // update after dragging
         valueMax = getterMax.get(); // update after dragging
 
-        int sliderMinX = (int) ((valueMin - min) / diff * width);
-        int sliderMaxX = (int) ((valueMax - min) / diff * width);
+        animatedValueMin = AnimationUtil.lerp(animatedValueMin, valueMin, delta * 10);
+        animatedValueMax = AnimationUtil.lerp(animatedValueMax, valueMax, delta * 10);
 
-        context.fill(x, y, x + width, y + height, Colors.SLIDER.getRGB());
-        context.fill(x + sliderMinX, y, x + sliderMaxX, y + height, Colors.ACCENT.getRGB());
-        context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, name + ": " + String.format("%.2f", valueMin) + " - " + String.format("%.2f", valueMax), x + 2, y + 2, Colors.TEXT.getRGB());
+        int sliderMinX = (int) (((animatedValueMin - min) / diff) * width);
+        int sliderMaxX = (int) (((animatedValueMax - min) / diff) * width);
+
+        RenderUtil.drawRoundedRect(context, x, y, width, height, 2, isMouseOver(mouseX, mouseY) ? Colors.BUTTON_HOVER.getRGB() : Colors.BUTTON.getRGB());
+        RenderUtil.drawRoundedRect(context, x + sliderMinX, y, sliderMaxX - sliderMinX, height, 2, Colors.ACCENT.getRGB());
+
+        String valueStr = String.format("%.2f-%.2f", valueMin, valueMax);
+        FontManager.PRODUCT_SANS.drawWithShadow(context.getMatrices(), name, x + 4, y + (height - FontManager.PRODUCT_SANS.fontHeight) / 2, Colors.TEXT.getRGB());
+        FontManager.PRODUCT_SANS.drawWithShadow(context.getMatrices(), valueStr, x + width - FontManager.PRODUCT_SANS.getWidth(valueStr) - 4, y + (height - FontManager.PRODUCT_SANS.fontHeight) / 2, Colors.TEXT.getRGB());
+
+        RenderUtil.drawCircle(context, x + sliderMinX, y + height / 2.0, height / 2.5, Colors.ACCENT.darker().getRGB());
+        RenderUtil.drawCircle(context, x + sliderMaxX, y + height / 2.0, height / 2.5, Colors.ACCENT.darker().getRGB());
     }
 
     @Override

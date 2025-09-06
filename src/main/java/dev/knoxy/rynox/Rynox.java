@@ -5,6 +5,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
+import dev.knoxy.rynox.client.gui.FontManager;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
@@ -23,6 +24,8 @@ public class Rynox implements ModInitializer {
     @Override
     public void onInitialize() {
         LOGGER.info("Initializing Rynox...");
+
+        FontManager.init();
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (TOGGLE_GUI_KEYBINDING.wasPressed()) {
