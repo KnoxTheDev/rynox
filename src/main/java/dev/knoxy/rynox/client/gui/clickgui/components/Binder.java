@@ -2,26 +2,24 @@ package dev.knoxy.rynox.client.gui.clickgui.components;
 
 import dev.knoxy.rynox.client.gui.clickgui.api.Component;
 import dev.knoxy.rynox.client.gui.clickgui.util.RenderUtil;
+import dev.knoxy.rynox.client.module.Module;
 import net.minecraft.client.MinecraftClient;
 import dev.knoxy.rynox.client.gui.clickgui.theme.Colors;
 import net.minecraft.client.gui.DrawContext;
+import org.lwjgl.glfw.GLFW;
 
 import java.awt.Color;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-public class Checkbox extends Component {
+public class Binder extends Component {
 
-    private final String name;
-    private final Supplier<Boolean> getter;
-    private final Consumer<Boolean> setter;
+    private final Module module;
+    private boolean binding;
     private float hoverAnimation;
 
-    public Checkbox(String name, Supplier<Boolean> getter, Consumer<Boolean> setter, int x, int y, int width, int height) {
+    public Binder(Module module, int x, int y, int width, int height) {
         super(x, y, width, height);
-        this.name = name;
-        this.getter = getter;
-        this.setter = setter;
+        this.module = module;
+        this.binding = false;
         this.hoverAnimation = 0.0f;
     }
 
@@ -33,7 +31,7 @@ public class Checkbox extends Component {
             hoverAnimation = Math.max(0.0f, hoverAnimation - delta * 5.0f);
         }
 
-        Color color = new Color(Colors.CHECKBOX);
+        Color color = new Color(Colors.BUTTON);
         Color hoverColor = new Color(Colors.BUTTON_HOVER);
 
         int blendedColor = new Color(
@@ -43,17 +41,26 @@ public class Checkbox extends Component {
         ).getRGB();
 
         RenderUtil.drawRoundedRect(context, x, y, width, height, 3, blendedColor);
-        context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, name, x + 2, y + 2, Colors.TEXT);
-
-        if (getter.get()) {
-            RenderUtil.drawRoundedRect(context, x + width - 12, y + 2, 10, 8, 2, Colors.ACCENT);
-        }
+        String text = binding ? "Press a key..." : "Bind: " + (module.getKey() == -1 ? "None" : GLFW.glfwGetKeyName(module.getKey(), 0));
+        context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, text, x + 2, y + 2, Colors.TEXT);
     }
 
     @Override
     public void mouseClicked(double mouseX, double mouseY, int button) {
         if (isMouseOver(mouseX, mouseY) && button == 0) {
-            setter.accept(!getter.get());
+            binding = !binding;
+        }
+    }
+
+    @Override
+    public void keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (binding) {
+            if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                module.setKey(-1);
+            } else {
+                module.setKey(keyCode);
+            }
+            binding = false;
         }
     }
 }

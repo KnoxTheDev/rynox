@@ -10,6 +10,7 @@ public class Module {
     private final String description;
     private final Category category;
     private boolean enabled;
+    private int key = -1;
     private final List<Setting<?>> settings = new ArrayList<>();
 
     public Module(String name, String description, Category category) {
@@ -54,6 +55,14 @@ public class Module {
 
     public void toggle() {
         setEnabled(!this.enabled);
+    }
+
+    public int getKey() {
+        return key;
+    }
+
+    public void setKey(int key) {
+        this.key = key;
     }
 
     public void onEnable() {
