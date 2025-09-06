@@ -14,18 +14,20 @@ public class Checkbox extends Component {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta, float alpha) {
+        int alphaComponent = ((int)(alpha * 255)) << 24;
+
         // Draw the main box
-        context.fill(x, y, x + width, y + height, 0xFF303030);
+        context.fill(x, y, x + width, y + height, alphaComponent | 0x303030);
 
         // Draw the checkmark if checked
         if (this.checked) {
-            context.fill(x + 2, y + 2, x + width - 2, y + height - 2, 0xFFFFFFFF);
+            context.fill(x + 2, y + 2, x + width - 2, y + height - 2, alphaComponent | 0xFFFFFF);
         }
 
         // Draw the label text
         var textRenderer = MinecraftClient.getInstance().textRenderer;
-        context.drawTextWithShadow(textRenderer, this.label, x + width + 5, y + (height - 8) / 2, 0xFFFFFFFF);
+        context.drawTextWithShadow(textRenderer, this.label, x + width + 5, y + (height - 8) / 2, alphaComponent | 0xFFFFFF);
     }
 
     @Override

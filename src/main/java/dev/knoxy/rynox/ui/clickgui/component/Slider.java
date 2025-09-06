@@ -15,19 +15,21 @@ public class Slider extends Component {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta, float alpha) {
+        int alphaComponent = ((int)(alpha * 255)) << 24;
+
         // Draw the slider track
-        context.fill(x, y + height / 2 - 1, x + width, y + height / 2 + 1, 0xFF202020);
+        context.fill(x, y + height / 2 - 1, x + width, y + height / 2 + 1, alphaComponent | 0x202020);
 
         // Draw the handle
         int handleWidth = 4;
         int handleX = (int) (x + (width - handleWidth) * this.value);
-        context.fill(handleX, y, handleX + handleWidth, y + height, 0xFF707070);
+        context.fill(handleX, y, handleX + handleWidth, y + height, alphaComponent | 0x707070);
 
         // Draw the label and value
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         String displayText = String.format("%s: %.2f", label, this.value);
-        context.drawTextWithShadow(textRenderer, displayText, x, y - 12, 0xFFFFFFFF);
+        context.drawTextWithShadow(textRenderer, displayText, x, y - 12, alphaComponent | 0xFFFFFF);
     }
 
     @Override

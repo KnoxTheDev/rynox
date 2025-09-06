@@ -1,6 +1,5 @@
 package dev.knoxy.rynox.ui.clickgui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.knoxy.rynox.ui.clickgui.component.*;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -40,7 +39,6 @@ public class ClickGUI extends Screen {
         testFrame.addComponent(new Checkbox("A Checkbox", 0, 0, 12));
         testFrame.addComponent(new Slider("A Slider", 0, 0, 100, 10));
 
-        // Add the new components
         List<String> dropdownOptions = List.of("Vanilla", "Grim", "Verus");
         testFrame.addComponent(new Dropdown("Mode", dropdownOptions, 0, 0, 100, 15));
         testFrame.addComponent(new RangeSlider("Reach", 0, 0, 100, 10));
@@ -83,44 +81,42 @@ public class ClickGUI extends Screen {
             }
         }
 
-        if (alpha <= 0.05f) return;
-
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, alpha);
-
-        this.renderBackground(context, mouseX, mouseY, delta);
-
-        for (Frame frame : frames) {
-            frame.render(context, mouseX, mouseY, delta);
+        if (alpha <= 0.05f) {
+            return;
         }
 
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.disableBlend();
+        // Draw our own background with the calculated alpha.
+        int backgroundAlpha = (int)(alpha * 128); // 128 is roughly half of 255
+        context.fill(0, 0, this.width, this.height, backgroundAlpha << 24);
+
+        // Pass the alpha value down to the frames
+        for (Frame frame : frames) {
+            frame.render(context, mouseX, mouseY, delta, alpha);
+        }
     }
 
     @Override
-    public void mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         for (Frame frame : frames) {
             frame.mouseClicked(mouseX, mouseY, button);
         }
-        super.mouseClicked(mouseX, mouseY, button);
+        return true; // Consume the click event
     }
 
     @Override
-    public void mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
         for (Frame frame : frames) {
             frame.mouseReleased(mouseX, mouseY, button);
         }
-        super.mouseReleased(mouseX, mouseY, button);
+        return true; // Consume the release event
     }
 
     @Override
-    public void mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         for (Frame frame : frames) {
             frame.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
         }
-        super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        return true; // Consume the drag event
     }
 
     @Override

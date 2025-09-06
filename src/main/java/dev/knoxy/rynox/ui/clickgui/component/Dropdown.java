@@ -21,28 +21,29 @@ public class Dropdown extends Component {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta, float alpha) {
         var textRenderer = MinecraftClient.getInstance().textRenderer;
+        int alphaComponent = ((int)(alpha * 255)) << 24;
 
         // Draw label
-        context.drawTextWithShadow(textRenderer, label, x, y - 12, 0xFFFFFFFF);
+        context.drawTextWithShadow(textRenderer, label, x, y - 12, alphaComponent | 0xFFFFFF);
 
         // Draw the main box that shows the selected item
-        context.fill(x, y, x + width, y + height, 0xFF303030);
-        context.drawTextWithShadow(textRenderer, selected, x + 5, y + (height - 8) / 2, 0xFFFFFFFF);
+        context.fill(x, y, x + width, y + height, alphaComponent | 0x303030);
+        context.drawTextWithShadow(textRenderer, selected, x + 5, y + (height - 8) / 2, alphaComponent | 0xFFFFFF);
 
         // Draw arrow indicator
         String arrow = expanded ? "^" : "v";
-        context.drawTextWithShadow(textRenderer, arrow, x + width - 10, y + (height - 8) / 2, 0xFFFFFFFF);
+        context.drawTextWithShadow(textRenderer, arrow, x + width - 10, y + (height - 8) / 2, alphaComponent | 0xFFFFFF);
 
         // If expanded, draw the list of options
         if (expanded) {
             int yOffset = y + height;
             for (String option : options) {
                 boolean hovered = mouseX >= x && mouseX <= x + width && mouseY >= yOffset && mouseY <= yOffset + height;
-                int color = hovered ? 0xFF505050 : 0xFF303030; // Highlight on hover
-                context.fill(x, yOffset, x + width, yOffset + height, color);
-                context.drawTextWithShadow(textRenderer, option, x + 5, yOffset + (height - 8) / 2, 0xFFFFFFFF);
+                int color = hovered ? 0x505050 : 0x303030;
+                context.fill(x, yOffset, x + width, yOffset + height, alphaComponent | color);
+                context.drawTextWithShadow(textRenderer, option, x + 5, yOffset + (height - 8) / 2, alphaComponent | 0xFFFFFF);
                 yOffset += height;
             }
         }

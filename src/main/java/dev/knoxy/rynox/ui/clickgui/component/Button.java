@@ -12,14 +12,17 @@ public class Button extends Component {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta, float alpha) {
         boolean hovered = isMouseOver(mouseX, mouseY);
-        int color = hovered ? 0xFF505050 : 0xFF404040; // Lighter gray when hovered
+        int baseColor = hovered ? 0x505050 : 0x404040;
+        int textColor = 0xFFFFFF;
 
-        context.fill(x, y, x + width, y + height, color);
+        int alphaComponent = ((int)(alpha * 255)) << 24;
+
+        context.fill(x, y, x + width, y + height, alphaComponent | baseColor);
 
         var textRenderer = MinecraftClient.getInstance().textRenderer;
-        context.drawCenteredTextWithShadow(textRenderer, this.text, x + width / 2, y + (height - 8) / 2, 0xFFFFFFFF);
+        context.drawCenteredTextWithShadow(textRenderer, this.text, x + width / 2, y + (height - 8) / 2, alphaComponent | textColor);
     }
 
     @Override

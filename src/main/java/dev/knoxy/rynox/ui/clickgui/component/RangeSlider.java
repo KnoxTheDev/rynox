@@ -18,25 +18,26 @@ public class RangeSlider extends Component {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta, float alpha) {
         var textRenderer = MinecraftClient.getInstance().textRenderer;
+        int alphaComponent = ((int)(alpha * 255)) << 24;
 
         // Draw label and values
         String displayText = String.format("%s: [%.2f, %.2f]", label, minValue, maxValue);
-        context.drawTextWithShadow(textRenderer, displayText, x, y - 12, 0xFFFFFFFF);
+        context.drawTextWithShadow(textRenderer, displayText, x, y - 12, alphaComponent | 0xFFFFFF);
 
         // Draw the background track
-        context.fill(x, y, x + width, y + height, 0xFF202020);
+        context.fill(x, y, x + width, y + height, alphaComponent | 0x202020);
 
         // Draw the selected range
         int rangeStartX = (int) (x + width * minValue);
         int rangeEndX = (int) (x + width * maxValue);
-        context.fill(rangeStartX, y, rangeEndX, y + height, 0xFF5E87B0);
+        context.fill(rangeStartX, y, rangeEndX, y + height, alphaComponent | 0x5E87B0);
 
         // Draw handles
-        int handleWidth = 2; // Thinner handles for a cleaner look
-        context.fill(rangeStartX - 1, y, rangeStartX + handleWidth - 1, y + height, 0xFF707070);
-        context.fill(rangeEndX - 1, y, rangeEndX + handleWidth - 1, y + height, 0xFF707070);
+        int handleWidth = 2;
+        context.fill(rangeStartX - 1, y, rangeStartX + handleWidth - 1, y + height, alphaComponent | 0x707070);
+        context.fill(rangeEndX - 1, y, rangeEndX + handleWidth - 1, y + height, alphaComponent | 0x707070);
     }
 
     @Override

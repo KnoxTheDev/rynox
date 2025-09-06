@@ -39,19 +39,21 @@ public class Frame {
         this.yOffset += component.getHeight() + padding;
     }
 
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // Title bar background
-        context.fill(x, y, x + width, y + 20, 0xFF404040);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta, float alpha) {
+        int alphaComponent = ((int)(alpha * 255)) << 24;
 
-        // Frame background
-        context.fill(x, y + 20, x + width, y + height, 0x90202020);
+        // Title bar background, using a base color of 0x404040
+        context.fill(x, y, x + width, y + 20, alphaComponent | 0x404040);
+
+        // Frame background, using a base color of 0x202020
+        context.fill(x, y + 20, x + width, y + height, alphaComponent | 0x202020);
 
         // Title text
-        context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, title, x + 5, y + 7, 0xFFFFFFFF);
+        context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, title, x + 5, y + 7, alphaComponent | 0xFFFFFF);
 
         // Render components
         for (Component component : components) {
-            component.render(context, mouseX, mouseY, delta);
+            component.render(context, mouseX, mouseY, delta, alpha);
         }
     }
 

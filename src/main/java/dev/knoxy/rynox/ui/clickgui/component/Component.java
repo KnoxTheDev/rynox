@@ -12,7 +12,7 @@ public abstract class Component {
         this.height = height;
     }
 
-    public abstract void render(DrawContext context, int mouseX, int mouseY, float delta);
+    public abstract void render(DrawContext context, int mouseX, int mouseY, float delta, float alpha);
 
     public abstract void mouseClicked(double mouseX, double mouseY, int button);
 
