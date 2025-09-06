@@ -1,78 +1,101 @@
 package dev.knoxy.rynox.client.gui.clickgui.components;
 
 import dev.knoxy.rynox.client.gui.clickgui.api.Component;
-import dev.knoxy.rynox.client.gui.clickgui.theme.Colors;
+import dev.knoxy.rynox.client.gui.clickgui.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
+import dev.knoxy.rynox.client.gui.clickgui.theme.Colors;
 import net.minecraft.client.gui.DrawContext;
 
+import java.awt.Color;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class RangeSlider extends Component {
 
     private final String name;
-    private final Supplier<Double> getterMin;
-    private final Consumer<Double> setterMin;
-    private final Supplier<Double> getterMax;
-    private final Consumer<Double> setterMax;
+    private final Supplier<Double> minGetter;
+    private final Consumer<Double> minSetter;
+    private final Supplier<Double> maxGetter;
+    private final Consumer<Double> maxSetter;
     private final double min;
     private final double max;
     private boolean draggingMin;
     private boolean draggingMax;
+    private float hoverAnimation;
 
-    public RangeSlider(String name, Supplier<Double> getterMin, Consumer<Double> setterMin, Supplier<Double> getterMax, Consumer<Double> setterMax, double min, double max, int x, int y, int width, int height) {
+    public RangeSlider(String name, Supplier<Double> minGetter, Consumer<Double> minSetter, Supplier<Double> maxGetter, Consumer<Double> maxSetter, double min, double max, int x, int y, int width, int height) {
         super(x, y, width, height);
         this.name = name;
-        this.getterMin = getterMin;
-        this.setterMin = setterMin;
-        this.getterMax = getterMax;
-        this.setterMax = setterMax;
+        this.minGetter = minGetter;
+        this.minSetter = minSetter;
+        this.maxGetter = maxGetter;
+        this.maxSetter = maxSetter;
         this.min = min;
         this.max = max;
         this.draggingMin = false;
         this.draggingMax = false;
+        this.hoverAnimation = 0.0f;
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        double valueMin = getterMin.get();
-        double valueMax = getterMax.get();
-        double diff = max - min;
-
         if (draggingMin) {
-            double newValue = min + (Math.max(0, Math.min(width, mouseX - x)) / width) * diff;
-            if (newValue < valueMax) {
-                setterMin.accept(newValue);
+            double diff = max - min;
+            double val = min + (Math.max(0, Math.min(width, mouseX - x)) / width) * diff;
+            if (val < maxGetter.get()) {
+                minSetter.accept(val);
             }
         }
         if (draggingMax) {
-            double newValue = min + (Math.max(0, Math.min(width, mouseX - x)) / width) * diff;
-            if (newValue > valueMin) {
-                setterMax.accept(newValue);
+            double diff = max - min;
+            double val = min + (Math.max(0, Math.min(width, mouseX - x)) / width) * diff;
+            if (val > minGetter.get()) {
+                maxSetter.accept(val);
             }
         }
 
-        valueMin = getterMin.get(); // update after dragging
-        valueMax = getterMax.get(); // update after dragging
+        if (isMouseOver(mouseX, mouseY)) {
+            hoverAnimation = Math.min(1.0f, hoverAnimation + delta * 5.0f);
+        } else {
+            hoverAnimation = Math.max(0.0f, hoverAnimation - delta * 5.0f);
+        }
 
-        int sliderMinX = (int) ((valueMin - min) / diff * width);
-        int sliderMaxX = (int) ((valueMax - min) / diff * width);
+        Color color = new Color(Colors.SLIDER);
+        Color hoverColor = new Color(Colors.BUTTON_HOVER);
 
-        context.fill(x, y, x + width, y + height, Colors.SLIDER.getRGB());
-        context.fill(x + sliderMinX, y, x + sliderMaxX, y + height, Colors.ACCENT.getRGB());
-        context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, name + ": " + String.format("%.2f", valueMin) + " - " + String.format("%.2f", valueMax), x + 2, y + 2, Colors.TEXT.getRGB());
+        int blendedColor = new Color(
+                (int) (color.getRed() * (1 - hoverAnimation) + hoverColor.getRed() * hoverAnimation),
+                (int) (color.getGreen() * (1 - hoverAnimation) + hoverColor.getGreen() * hoverAnimation),
+                (int) (color.getBlue() * (1 - hoverAnimation) + hoverColor.getBlue() * hoverAnimation)
+        ).getRGB();
+
+        double minValue = minGetter.get();
+        double maxValue = maxGetter.get();
+        double diff = max - min;
+        double minSliderWidth = ((minValue - min) / diff) * width;
+        double maxSliderWidth = ((maxValue - min) / diff) * width;
+
+        RenderUtil.drawRoundedRect(context, x, y, width, height, 3, blendedColor);
+        RenderUtil.drawRoundedRect(context, x + minSliderWidth, y, maxSliderWidth - minSliderWidth, height, 3, Colors.ACCENT);
+
+        RenderUtil.drawRoundedRect(context, x + minSliderWidth - 2, y - 1, 4, height + 2, 2, Color.WHITE.getRGB());
+        RenderUtil.drawRoundedRect(context, x + maxSliderWidth - 2, y - 1, 4, height + 2, 2, Color.WHITE.getRGB());
+
+        String valueString = String.format("%.2f - %.2f", minValue, maxValue);
+        context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, name, x + 2, y + 2, Colors.TEXT);
+        context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, valueString, x + width - MinecraftClient.getInstance().textRenderer.getWidth(valueString) - 2, y + 2, Colors.TEXT);
     }
 
     @Override
     public void mouseClicked(double mouseX, double mouseY, int button) {
         if (isMouseOver(mouseX, mouseY) && button == 0) {
-            double valueMin = getterMin.get();
-            double valueMax = getterMax.get();
+            double minValue = minGetter.get();
+            double maxValue = maxGetter.get();
             double diff = max - min;
+            double minSliderWidth = ((minValue - min) / diff) * width;
+            double maxSliderWidth = ((maxValue - min) / diff) * width;
 
-            double clickedValue = min + (Math.max(0, Math.min(width, mouseX - x)) / width) * diff;
-
-            if (Math.abs(clickedValue - valueMin) < Math.abs(clickedValue - valueMax)) {
+            if (Math.abs(mouseX - (x + minSliderWidth)) < Math.abs(mouseX - (x + maxSliderWidth))) {
                 draggingMin = true;
             } else {
                 draggingMax = true;

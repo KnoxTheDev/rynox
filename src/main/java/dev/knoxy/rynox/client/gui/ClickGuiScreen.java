@@ -42,22 +42,24 @@ public class ClickGuiScreen extends Screen {
 
             Frame frame = new Frame(category, x, 10, 100, 14);
             for (Module module : modules) {
-                frame.addComponent(new Button(module, 0, 0, 100, 12));
+                Button button = new Button(module, 0, 0, 100, 12);
+                button.addSetting(new Binder(module, 0, 0, 100, 12));
                 for (Setting<?> setting : module.getSettings()) {
                     if (setting instanceof BooleanSetting) {
                         BooleanSetting booleanSetting = (BooleanSetting) setting;
-                        frame.addComponent(new Checkbox(booleanSetting.getName(), booleanSetting::getValue, booleanSetting::setValue, 0, 0, 100, 12));
+                        button.addSetting(new Checkbox(booleanSetting.getName(), booleanSetting::getValue, booleanSetting::setValue, 0, 0, 100, 12));
                     } else if (setting instanceof DoubleSetting) {
                         DoubleSetting doubleSetting = (DoubleSetting) setting;
-                        frame.addComponent(new Slider(doubleSetting.getName(), doubleSetting::getValue, doubleSetting::setValue, doubleSetting.getMin(), doubleSetting.getMax(), 0, 0, 100, 12));
+                        button.addSetting(new Slider(doubleSetting.getName(), doubleSetting::getValue, doubleSetting::setValue, doubleSetting.getMin(), doubleSetting.getMax(), 0, 0, 100, 12));
                     } else if (setting instanceof RangeSetting) {
                         RangeSetting rangeSetting = (RangeSetting) setting;
-                        frame.addComponent(new RangeSlider(rangeSetting.getName(), () -> rangeSetting.getValue().getMin(), (val) -> rangeSetting.getValue().setMin(val), () -> rangeSetting.getValue().getMax(), (val) -> rangeSetting.getValue().setMax(val), rangeSetting.getMin(), rangeSetting.getMax(), 0, 0, 100, 12));
+                        button.addSetting(new RangeSlider(rangeSetting.getName(), () -> rangeSetting.getValue().getMin(), (val) -> rangeSetting.getValue().setMin(val), () -> rangeSetting.getValue().getMax(), (val) -> rangeSetting.getValue().setMax(val), rangeSetting.getMin(), rangeSetting.getMax(), 0, 0, 100, 12));
                     } else if (setting instanceof EnumSetting) {
                         EnumSetting enumSetting = (EnumSetting) setting;
-                        frame.addComponent(new Dropdown(enumSetting.getName(), enumSetting::getValue, enumSetting::setValue, enumSetting.getValues(), 0, 0, 100, 12));
+                        button.addSetting(new Dropdown(enumSetting.getName(), enumSetting::getValue, enumSetting::setValue, enumSetting.getValues(), 0, 0, 100, 12));
                     }
                 }
+                frame.addComponent(button);
             }
             frames.add(frame);
             x += 110;
